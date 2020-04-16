@@ -14,7 +14,6 @@ def create(content, secret, step):
 
 
 def header_is_verified(content, payload_len, psecret):
-    # not checking the payload length since 461 server has error
     len = int.from_bytes(content[0:4], 'big')
     pre = int.from_bytes(content[4:8], 'big')
     step = int.from_bytes(content[8:10], 'big')
@@ -74,23 +73,22 @@ def new_client(message, client_address):
     new_client_socket.bind((ip, tcp_port))
     new_client_socket.listen(5)
     connection, address_c = new_client_socket.accept()
-    num2 = random.randint(1, 20)
-    len2 = random.randint(1, 20)
+    num2 = 10#random.randint(1, 20)
+    len2 = 1#random.randint(1, 20)
     secret_c = random.randint(2000, 3000)
     c = chr(random.randint(1, 128))
     payload_c = num2.to_bytes(4, 'big') + len2.to_bytes(4, 'big') + secret_c.to_bytes(4, 'big') + c.encode('utf-8')
+    print("length of c", len(c.encode('utf-8')))
     connection.sendto(create(payload_c, secret_b, 2), address_c)
 
     # part d
     length_received = 0
-
-    while length_received < num2*len2:
+    while length_received < (len2 + header_len + 3) // 4 * 4 * num2:
         message_d = connection.recv(1024)
         if not header_is_verified(message_d, len2, secret_c):
             return
-        # for i in range(header_len, header_len + len2):
-        #     print(chr(message_d[i]))
-        length_received += len(message_d) - 12
+        length_received += len(message_d)
+        print("length_received", length_received)
     secret_d = random.randint(3000, 4000)
     connection.send(create(secret_d.to_bytes(4, 'big'), secret_c, 2))
 

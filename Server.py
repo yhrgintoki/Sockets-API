@@ -19,6 +19,7 @@ def header_is_verified(content, payload_len, psecret):
         return False
     return True
 
+
 def new_client(message, client_address):
     # part a
     message_a = "hello world\0"
@@ -49,21 +50,21 @@ def new_client(message, client_address):
         ack_bool = random.randint(0, 1)
         if ack_bool:
             continue
+
         if not header_is_verified(message_b, len_a + 4, secret_a):
             print("incorrect header from client")
             return
+
         if not len(message_b) == (len_a + 4 + header_len + 3) // 4 * 4:
             print("packet length should be len + 4")
             return
 
         packet_id = int.from_bytes(message_b[header_len:header_len+4], 'big')
-        if packet_id != packet_received:
-            print("packet_id != packet_received")
-            return
 
         if packet_id != packet_received:
             print("packet_id != packet_received")
             continue
+
         acked_packet_id = packet_id.to_bytes(4, 'big')
         for i in range(header_len + 4, len(message_b)):
             if not message_b[i] == 0:

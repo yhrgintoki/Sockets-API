@@ -26,7 +26,7 @@ def new_client(message, client_address):
     psecret_a = 0
     num_a = random.randint(0, 50)
     len_a = random.randint(4, 64)
-    udp_port_a = random.randint(0, 65535)
+    udp_port_a = random.randint(49152, 65535)
     secret_a = random.randint(1, 1000)
 
     # check header
@@ -82,7 +82,7 @@ def new_client(message, client_address):
                 return
         new_client_socket.sendto(create(acked_packet_id, secret_a, 1, client_digit), client_address)
         packet_received += 1
-    tcp_port = random.randint(10000, 20000)
+    tcp_port = random.randint(49152, 65535)
     secret_b = random.randint(1000, 2000)
     payload_b = tcp_port.to_bytes(4, 'big') + secret_b.to_bytes(4, 'big')
     new_client_socket.sendto(create(payload_b, secret_a, 2, client_digit), client_address)

@@ -1,6 +1,6 @@
 # Sockets-API
 the python version is 3.7
-## How to run:
+## How to use:
 ### 1. Run the server:
    #### ./Server.py
 

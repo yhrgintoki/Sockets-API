@@ -105,8 +105,6 @@ def new_client(message, client_address):
     while length_received < packet_length * num2:
         message_d = connection.recv(1024)
         length_received += len(message_d)
-        print(len(message_d))
-        print("len2", len2)
         while len(message_d) > 0:
             if not header_is_verified(message_d, len2, secret_c, client_digit):
                 print("incorrect header in stage d")
@@ -123,7 +121,7 @@ def new_client(message, client_address):
 
 step_num_client = 1
 header_len = 12
-ip = 'localhost'
+ip = '127.0.0.1'
 port = 12235
 buffer_len = 1024
 server_timeout = 3

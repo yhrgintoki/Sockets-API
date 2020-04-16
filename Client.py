@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import socket
+import sys
 
 
 def create(content, secret):
@@ -21,9 +22,14 @@ def check_ack(content, id):
         print('Ack package not match')
 
 
+if len(sys.argv) != 4:
+    print('Wrong number of argument')
 buffer = 1024
-ip = socket.gethostbyname("attu2.cs.washington.edu")
-port = 12235
+if sys.argv[1] == 0:
+    ip = socket.gethostbyname(sys.argv[2])
+else:
+    ip = sys.argv[2]
+port = int(sys.argv[3])
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client.sendto(create("hello world\0".encode(), 0), (ip, port))
 message, addr = client.recvfrom(buffer)

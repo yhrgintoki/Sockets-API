@@ -46,21 +46,33 @@ def new_client(message, client_address):
     # part b
     new_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     new_client_socket.bind((ip, udp_port_a))
+    new_client_socket.settimeout(server_timeout)
     packet_received = 0
     while packet_received < num_a:
         message_b, address_b = new_client_socket.recvfrom(buffer_len)
-
-        if not header_is_verified(message_b, len_a + 4, secret_a):
-            print("incorrect header from client")
-            return
         ack_bool = random.randint(0, 1)
         if ack_bool:
             continue
+        if not header_is_verified(message_b, len_a + 4, secret_a):
+            print("incorrect header from client")
+            return
+        if not len(message_b) == (len_a + 4 + header_len + 3) // 4 * 4:
+            print("packet length should be len + 4")
+            return
+
         packet_id = int.from_bytes(message_b[header_len:header_len+4], 'big')
+        if packet_id != packet_received:
+            print("packet_id != packet_received")
+            return
+
         if packet_id != packet_received:
             print("packet_id != packet_received")
             continue
         acked_packet_id = packet_id.to_bytes(4, 'big')
+        for i in range(header_len + 4, len(message_b)):
+            if not message_b[i] == 0:
+                print("the rest of the packet from client is not 0 in step b1")
+                return
         new_client_socket.sendto(create(acked_packet_id, secret_a, 1), client_address)
         packet_received += 1
     tcp_port = random.randint(10000, 20000)
@@ -78,17 +90,16 @@ def new_client(message, client_address):
     secret_c = random.randint(2000, 3000)
     c = chr(random.randint(1, 128))
     payload_c = num2.to_bytes(4, 'big') + len2.to_bytes(4, 'big') + secret_c.to_bytes(4, 'big') + c.encode('utf-8')
-    print("length of c", len(c.encode('utf-8')))
     connection.sendto(create(payload_c, secret_b, 2), address_c)
 
     # part d
     length_received = 0
+    new_client_socket.settimeout(server_timeout)
     while length_received < (len2 + header_len + 3) // 4 * 4 * num2:
         message_d = connection.recv(1024)
         if not header_is_verified(message_d, len2, secret_c):
             return
         length_received += len(message_d)
-        print("length_received", length_received)
     secret_d = random.randint(3000, 4000)
     connection.send(create(secret_d.to_bytes(4, 'big'), secret_c, 2))
 

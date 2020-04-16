@@ -4,10 +4,6 @@ import _thread
 import random
 
 
-step_num_client = 1
-header_len = 12
-
-
 def create(content, secret, step):
     pad = int((len(content) + 3) / 4) * 4 - len(content)
     return len(content).to_bytes(4, 'big') + secret.to_bytes(4, 'big') + step.to_bytes(2, 'big') + (40).to_bytes(2, 'big') + content + bytes(pad)
@@ -104,6 +100,8 @@ def new_client(message, client_address):
     connection.send(create(secret_d.to_bytes(4, 'big'), secret_c, 2))
 
 
+step_num_client = 1
+header_len = 12
 ip = 'localhost'
 port = 12235
 buffer_len = 1024
@@ -113,6 +111,4 @@ server.bind((ip, port))
 while True:
     message, address = server.recvfrom(buffer_len)
     _thread.start_new_thread(new_client, (message, address))
-
-
 

@@ -2,6 +2,7 @@
 import socket
 import _thread
 import random
+import sys
 
 
 def create(content, secret, step, client_digit):
@@ -119,10 +120,15 @@ def new_client(message, client_address):
     connection.send(create(secret_d.to_bytes(4, 'big'), secret_c, 2, client_digit))
 
 
+if len(sys.argv) != 4:
+    print('Wrong number of argument')
 step_num_client = 1
 header_len = 12
-ip = 'localhost'
-port = 12235
+if sys.argv[1] == 0:
+    ip = socket.gethostbyname(sys.argv[2])
+else:
+    ip = sys.argv[2]
+port = int(sys.argv[3])
 buffer_len = 1024
 server_timeout = 3
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

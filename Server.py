@@ -82,16 +82,15 @@ def new_client(message, client_address):
     connection.sendto(create(payload_c, secret_b, 2), address_c)
 
     # part d
-    num_received = 0
+    length_received = 0
 
-    while num_received < num2:
-        print("num_received", num_received)
-        message_d = connection.recv((buffer_len + len2 + 3) // 4 * 4)
+    while length_received < num2*len2:
+        message_d = connection.recv(1024)
         if not header_is_verified(message_d, len2, secret_c):
             return
-        for i in range(header_len, header_len + len2):
-            print(chr(message_d[i]))
-        num_received += 1
+        # for i in range(header_len, header_len + len2):
+        #     print(chr(message_d[i]))
+        length_received += len(message_d) - 12
     secret_d = random.randint(3000, 4000)
     connection.send(create(secret_d.to_bytes(4, 'big'), secret_c, 2))
 

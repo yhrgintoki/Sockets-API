@@ -121,7 +121,7 @@ def new_client(message, client_address):
 
 step_num_client = 1
 header_len = 12
-ip = '127.0.0.1'
+ip = 'localhost'
 port = 12235
 buffer_len = 1024
 server_timeout = 3
